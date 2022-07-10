@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs: 
+  slack: circleci/slack@4.10.1
+
 jobs:
   build-frontend:
     docker:
@@ -24,7 +27,7 @@ jobs:
             cd backend
             npm install
             npm run build
-            
+
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -73,6 +76,14 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
+      - slack/notify:
+          channel: C03NVK49N3F
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: C03NVK49N3F
+          event: fail
+          template: basic_fail_1
                 
 workflows:
   default:
@@ -87,4 +98,5 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
+          context: my_context
       
