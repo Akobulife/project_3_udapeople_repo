@@ -76,6 +76,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
+            return 1
       - slack/notify:
           channel: C03NVK49N3F
           event: pass
