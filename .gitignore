@@ -69,3 +69,4 @@ node_modules
 .env
 dist
 .circleci/config-sample.yml
+udacity_key.pem
