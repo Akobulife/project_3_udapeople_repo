@@ -12,8 +12,28 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            aws s3 rm "s3://udapeople-<< parameters.Workflow_ID >>" --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
+
+  rollback_migration:
+    description: Rollback the last migration if successfully run in the current workflow.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Rollback migrations
+          when: on_fail
+          command: |
+            SUCCESS=$(curl --insecure  https://kvdb.io/XGyzjYjULFzbKGUTqSu1Ef/migration_<< parameters.Workflow_ID >>)
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
+            fi
 
 jobs:
   build-frontend:
@@ -169,27 +189,24 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install AWS CLI v2
+      - run: 
+          name: Install dependencies
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-            aws --version
+            pip install awscli
+            apk add --update nodejs npm
+            apk add --update curl
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
             npm run migrations > migrations_dump.txt
-            cat migrations_dumps.txt
+            cat migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
@@ -198,6 +215,8 @@ jobs:
               curl https://kvdb.io/XGyzjYjULFzbKGUTqSu1Ef/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - destroy-environment
+      - rollback_migration
+
                 
 workflows:
   default:
