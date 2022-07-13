@@ -193,7 +193,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ./
+          at: ~/
       - restore_cache:
           keys: [backend-build]
       - run: 
@@ -225,7 +225,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ./
+          at: ~/
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -266,7 +266,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["04:18:e8:92:12:c9:16:e3:5a:0c:06:46:e4:e6:3f:40"]
       - attach_workspace:
-          at: .
+          at: ~/
       - run: 
           name: Display content of the inventory file
           command: |
@@ -287,7 +287,7 @@ jobs:
             cd ..
             tar -C backend -czvf artifact.tar.gz .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            cp artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
