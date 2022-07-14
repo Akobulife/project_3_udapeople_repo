@@ -357,7 +357,7 @@ jobs:
           root: ~/
           paths:
             - OldWorkflowID.txt
-       - attach_workspace:
+      - attach_workspace:
           at: ~/
       - destroy-environment
       - rollback_migration
