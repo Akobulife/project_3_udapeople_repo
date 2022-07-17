@@ -1,0 +1,9 @@
+[URL01]: https://github.com/Akobulife/project_3_udapeople_repo   (Public github repo)
+
+[URL02]: http://udapeople-f2a4861.s3-website-us-east-1.amazonaws.com   (S3 Public Address)
+
+[URL03]: https://d3le6wo7ha9rs1.cloudfront.net  (cloudfront domain name url)
+
+[URL04]: http://18.204.126.159:3030/api/status	(Backend url)
+
+[URL05]: http://ec2-34-226-225-98.compute-1.amazonaws.com:9090/targets
